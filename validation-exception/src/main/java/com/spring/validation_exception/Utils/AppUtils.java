@@ -1,5 +1,7 @@
 package com.spring.validation_exception.Utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.validation_exception.Entity.CourseEntity;
 import com.spring.validation_exception.dto.CourseRequestDTO;
 import com.spring.validation_exception.dto.CourseResponseDTO;
@@ -39,5 +41,13 @@ public class AppUtils {
         return courseResponse;
     }
 
+    public static String convertToJson(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return  null;
+    }
 
 }
