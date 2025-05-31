@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestControllerAdvice
 public class ApplicationGlobalExceptionHandler {
@@ -19,7 +20,7 @@ public class ApplicationGlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ServiceResponse<?> handleMethodArgumentException(MethodArgumentNotValidException exception) {
-        ServiceResponse<?> serviceResponse = new ServiceResponse<>();
+        ServiceResponse<Objects> serviceResponse = new ServiceResponse<>();
         List<ErrorsDTO> errorDTOList = new ArrayList<>();
         exception.getBindingResult().getFieldErrors()
                 .forEach(error -> {

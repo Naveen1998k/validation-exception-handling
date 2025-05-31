@@ -6,6 +6,11 @@ import com.spring.validation_exception.Utils.AppUtils;
 import com.spring.validation_exception.dto.CourseRequestDTO;
 import com.spring.validation_exception.dto.CourseResponseDTO;
 import com.spring.validation_exception.dto.ServiceResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +29,14 @@ public class CourseController {
         this.courseService = courseService;
     }
 
+    @Operation(summary = "add a new course to the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",description = "course added successfully",
+                    content = {
+                            @Content(mediaType = "application/json",schema = @Schema(implementation = CourseResponseDTO.class))
+                    }),
+            @ApiResponse(responseCode = "400",description = "validation error")
+    })
     @PostMapping("/add")
     public ServiceResponse<CourseResponseDTO> addCourse(@RequestBody @Valid CourseRequestDTO course){
         log.info("CourseController ::addCourse Method Started with request payload {}", AppUtils.convertToJson(course));
@@ -45,6 +58,7 @@ public class CourseController {
         return serviceResponse;
     }
 
+    @Operation(summary = "fetch all courses from the system")
     @GetMapping("/view")
     public ServiceResponse<List<CourseResponseDTO>> findAllCourses(){
         log.info("CourseController::findAllCourse Method Execution Started");
@@ -54,6 +68,14 @@ public class CourseController {
         return new ServiceResponse<>(HttpStatus.OK,courseResponseDTOS);
     }
 
+    @Operation(summary = "fetch course by id from the system")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200",description = "course fetched successfully",
+                    content = {
+                            @Content(mediaType = "application/json",schema = @Schema(implementation = CourseResponseDTO.class))
+                    }),
+            @ApiResponse(responseCode = "404",description = "course not found")
+    })
     @GetMapping("/search/{courseId}")
     public ServiceResponse<CourseResponseDTO> findCourseById(@PathVariable int courseId){
         log.info("CourseController::findCourseById method started with id {}",courseId);
@@ -64,12 +86,14 @@ public class CourseController {
         return new ServiceResponse<>(HttpStatus.OK,courseResponseDTO);
     }
 
+    @Operation(summary = "fetch course by id from the system using request param")
     @GetMapping("/search/request")
     public ServiceResponse<CourseResponseDTO> findCourseByIdReq(@RequestParam(required = false,defaultValue = "1") int courseId){
         CourseResponseDTO courseResponseDTO= courseService.findByCourseId(courseId);
         return new ServiceResponse<>(HttpStatus.OK,courseResponseDTO);
     }
 
+    @Operation(summary = "delete course by id from the system")
     @DeleteMapping("/delete/{courseId}")
     public ServiceResponse<String> deleteCourse(@PathVariable int courseId){
         log.info("CourseController::deleteCourse method started with id {}",courseId);
@@ -79,6 +103,7 @@ public class CourseController {
         return new ServiceResponse<>(HttpStatus.NO_CONTENT,"Course Deleted Successfully");
     }
 
+    @Operation(summary = "update course by id in the system")
     @PutMapping("/update/{courseId}")
     public ServiceResponse<CourseResponseDTO> updateCourse(@PathVariable int courseId, @RequestBody CourseRequestDTO course){
         log.info("CourseController::updateCourse method started with id {} and request payload {}", courseId, AppUtils.convertToJson(course));
@@ -89,6 +114,7 @@ public class CourseController {
         return new ServiceResponse<>(HttpStatus.OK,courseResponseDTO);
     }
 
+    @Operation(summary = "log various levels of messages")
     @GetMapping("/log")
     public String loggingLevel() {
         log.trace("trace message");
